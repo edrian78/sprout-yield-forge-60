@@ -1,14 +1,11 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Timer, TrendingUp, Clock, ExternalLink, Unlock, DollarSign, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useEscrows } from '@/hooks/useEscrows';
-import { httpsCallable } from 'firebase/functions';
-import { functions } from '@/lib/firebase';
-import { useToast } from '@/hooks/use-toast';
+import PaymentModal from '@/components/PaymentModal';
 
 interface ActiveEscrowDashboardProps {
   walletData?: { address: string; balances: { xrp: string; rlusd: string } } | null;
@@ -16,7 +13,19 @@ interface ActiveEscrowDashboardProps {
 
 const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
   const { escrows, loading, error } = useEscrows(walletData?.address || null);
-  const { toast } = useToast();
+  const [paymentModal, setPaymentModal] = useState<{
+    isOpen: boolean;
+    escrowId: string;
+    title: string;
+    amount: number;
+    asset: string;
+  }>({
+    isOpen: false,
+    escrowId: '',
+    title: '',
+    amount: 0,
+    asset: ''
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -52,28 +61,29 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
     return Math.max(0, diffDays);
   };
 
-  const handlePayment = async (escrowId: string) => {
-    try {
-      const requestEscrowPayment = httpsCallable(functions, 'requestEscrowPayment');
-      await requestEscrowPayment({ escrowId });
-      
-      toast({
-        title: "Payment Initiated",
-        description: "Escrow payment request has been sent successfully.",
-      });
-    } catch (error) {
-      console.error('Error initiating payment:', error);
-      toast({
-        title: "Payment Failed",
-        description: "Failed to initiate escrow payment. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handlePayment = (escrow: any) => {
+    setPaymentModal({
+      isOpen: true,
+      escrowId: escrow.id,
+      title: escrow.title,
+      amount: escrow.amount,
+      asset: escrow.asset
+    });
   };
 
   const handleRelease = (escrowId: string) => {
     console.log('Releasing escrow:', escrowId);
     window.dispatchEvent(new CustomEvent('navigate-to-payout-summary', { detail: { escrowId } }));
+  };
+
+  const closePaymentModal = () => {
+    setPaymentModal({
+      isOpen: false,
+      escrowId: '',
+      title: '',
+      amount: 0,
+      asset: ''
+    });
   };
 
   if (loading) {
@@ -185,7 +195,6 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
               </CardHeader>
 
               <CardContent className="space-y-6">
-                {/* Amount & Details */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -218,7 +227,6 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
                   </div>
                 </div>
 
-                {/* Progress for active escrows */}
                 {escrow.status === 'active' && (
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
@@ -234,11 +242,10 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
                   </div>
                 )}
 
-                {/* Action Buttons */}
                 <div className="pt-4">
                   {escrow.status === 'pending_payment' ? (
                     <Button 
-                      onClick={() => handlePayment(escrow.id)}
+                      onClick={() => handlePayment(escrow)}
                       className="w-full nature-gradient text-white font-semibold hover:scale-105 transition-all duration-300"
                     >
                       <CreditCard className="h-4 w-4 mr-2" />
@@ -294,6 +301,16 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
           </div>
         </Card>
       )}
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={paymentModal.isOpen}
+        onClose={closePaymentModal}
+        escrowId={paymentModal.escrowId}
+        escrowTitle={paymentModal.title}
+        amount={paymentModal.amount}
+        asset={paymentModal.asset}
+      />
     </div>
   );
 };
