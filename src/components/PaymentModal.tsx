@@ -33,6 +33,9 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
     try {
       const requestEscrowPayment = httpsCallable(functions, 'requestEscrowPayment');
       const response = await requestEscrowPayment({ escrowId });
+      console.log('Payment response:', response.data);
+      
+      // Extract the result from the response data
       const result = response.data as { result: { uuid: string; url: string } };
       
       setPaymentData(result.result);
