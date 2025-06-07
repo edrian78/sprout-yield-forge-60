@@ -52,9 +52,12 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
       
       const xummLogin = httpsCallable(functions, 'xummLogin');
       const result = await xummLogin();
-      const data = result.data as { qrCodeUrl: string; uuid: string };
+      const data = result.data as { url: string; uuid: string };
       
-      setQrCodeUrl(data.qrCodeUrl);
+      console.log('XUMM login response:', data);
+      
+      // Map the url to qrCodeUrl for consistency
+      setQrCodeUrl(data.url);
       setXummUuid(data.uuid);
       setShowQRDialog(true);
       
@@ -72,9 +75,11 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
     const checkStatus = async () => {
       try {
         const result = await xummGetLoginStatus({ uuid });
-        const data = result.data as { success: boolean; account?: string; balances?: { xrp: string; rlusd: string } };
+        const data = result.data as { signed: boolean; address?: string; balances?: { xrp: string; rlusd: string } };
         
-        if (data.success) {
+        console.log('XUMM status check:', data);
+        
+        if (data.signed) {
           setShowQRDialog(false);
           setConnecting(null);
           
@@ -284,6 +289,10 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
                   src={qrCodeUrl} 
                   alt="XUMM QR Code" 
                   className="w-48 h-48 object-contain"
+                  onError={(e) => {
+                    console.error('QR code image failed to load:', qrCodeUrl);
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               ) : (
                 <div className="w-48 h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
