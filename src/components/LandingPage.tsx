@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { ArrowRight, Play, Lock, TrendingUp, Unlock, Timer, Coins } from 'lucide-react';
+import { ArrowRight, Play, Timer, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface LandingPageProps {
   onStartEscrow: () => void;
@@ -13,22 +12,25 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
   return (
     <div className="relative">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="container mx-auto px-4 py-20 min-h-[80vh] flex items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* Left Content */}
           <div className="space-y-8">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h1 className="text-5xl lg:text-6xl font-bold text-shadow">
                 <span className="bg-gradient-to-r from-green-600 via-green-500 to-yellow-500 bg-clip-text text-transparent">
-                  Turning Trust
+                  Lock Funds.
                 </span>
                 <br />
-                <span className="text-foreground">Into Profit</span>
+                <span className="bg-gradient-to-r from-green-600 via-green-500 to-yellow-500 bg-clip-text text-transparent">
+                  Earn Yield.
+                </span>
+                <br />
+                <span className="text-foreground">Get Paid.</span>
               </h1>
               
               <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
-                Convert idle payments into passive yield while securing your transactions. 
-                Sprout makes every escrow a growth opportunity on the XRP Ledger.
+                Sprout transforms escrow into a yield-generating experience. Secure, simple, and built to grow — on XRPL.
               </p>
             </div>
 
@@ -109,108 +111,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
               </div>
               
               <div className="absolute -bottom-4 -left-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
-                <TrendingUp className="h-6 w-6 text-yellow-600" />
+                <Coins className="h-6 w-6 text-yellow-600" />
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Workflow Animation */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">How Sprout Works</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Three simple steps to turn your escrow into a yield-generating opportunity
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          {/* Step 1 */}
-          <Card className="glass-card floating-card border-0 text-center p-6">
-            <CardContent className="space-y-4">
-              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                <Lock className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold">Lock</h3>
-              <p className="text-muted-foreground">
-                Secure your payment in a smart escrow contract while earning yield
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Arrow */}
-          <div className="hidden md:flex items-center justify-center">
-            <ArrowRight className="h-6 w-6 text-green-500" />
-          </div>
-
-          {/* Step 2 */}
-          <Card className="glass-card floating-card border-0 text-center p-6" style={{ animationDelay: '0.2s' }}>
-            <CardContent className="space-y-4">
-              <div className="w-16 h-16 mx-auto bg-yellow-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="h-8 w-8 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-semibold">Earn</h3>
-              <p className="text-muted-foreground">
-                Your locked funds generate passive income through XRPL AMM strategies
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Arrow */}
-          <div className="hidden md:flex items-center justify-center">
-            <ArrowRight className="h-6 w-6 text-green-500" />
-          </div>
-
-          {/* Step 3 */}
-          <Card className="glass-card floating-card border-0 text-center p-6" style={{ animationDelay: '0.4s' }}>
-            <CardContent className="space-y-4">
-              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                <Unlock className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold">Release</h3>
-              <p className="text-muted-foreground">
-                Complete the transaction and receive both principal plus generated yield
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="glass-card floating-card border-0 p-6 text-center">
-            <CardContent className="space-y-3">
-              <Timer className="h-8 w-8 mx-auto sprout-icon" />
-              <h4 className="font-semibold">Automated Yield</h4>
-              <p className="text-sm text-muted-foreground">Passive income while you wait</p>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card floating-card border-0 p-6 text-center" style={{ animationDelay: '0.1s' }}>
-            <CardContent className="space-y-3">
-              <Timer className="h-8 w-8 mx-auto sprout-icon" />
-              <h4 className="font-semibold">Secure Escrow</h4>
-              <p className="text-sm text-muted-foreground">Trustless smart contracts</p>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card floating-card border-0 p-6 text-center" style={{ animationDelay: '0.2s' }}>
-            <CardContent className="space-y-3">
-              <Coins className="h-8 w-8 mx-auto coin-glow" />
-              <h4 className="font-semibold">Low Fees</h4>
-              <p className="text-sm text-muted-foreground">Minimal XRPL transaction costs</p>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card floating-card border-0 p-6 text-center" style={{ animationDelay: '0.3s' }}>
-            <CardContent className="space-y-3">
-              <TrendingUp className="h-8 w-8 mx-auto sprout-icon" />
-              <h4 className="font-semibold">Real-time Tracking</h4>
-              <p className="text-sm text-muted-foreground">Monitor yield as it grows</p>
-            </CardContent>
-          </Card>
         </div>
       </section>
     </div>
