@@ -78,50 +78,37 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
   };
 
   const pollLoginStatus = async (uuid: string) => {
-    
-    const xummGetLoginStatus = httpsCallable(functions, 'xummGetLoginStatus');
-    console.log(pollingActive)
-    const checkStatus = async () => {
-      if (!pollingActiveRef.current) return;
-      
-      try {
-        console.log('Checking XUMM login status for UUID:', uuid);
-        const result = await xummGetLoginStatus({ uuid });
-        const data = result.data as { signed: boolean; address?: string; balances?: { xrp: string; rlusd: string } };
-        
-        console.log('XUMM status check:', data);
-        
-        if (data.signed && data.address) {
-          console.log('XUMM login successful!');
-          setPollingActive(false);
-          pollingActiveRef.current = false;
-          setShowQRDialog(false);
-          setConnecting(null);
-          
-          // Store wallet data
-          setBalances(data.balances || { xrp: '0.00', rlusd: '0.00' });
-          setWalletAddress(data.address);
-          
-          // Pass wallet data to parent
-          onWalletConnect('xumm', {
-            address: data.address,
-            balances: data.balances || { xrp: '0.00', rlusd: '0.00' }
-          });
-        } else if (pollingActive) {
-          // Continue polling after 2 seconds
-          setTimeout(checkStatus, 2000);
-        }
-      } catch (error) {
-        console.error('Error checking XUMM login status:', error);
-        if (pollingActive) {
-          // Continue polling
-          setTimeout(checkStatus, 2000);
-        }
+  const xummGetLoginStatus = httpsCallable(functions, 'xummGetLoginStatus');
+  const checkStatus = async () => {
+    if (!pollingActiveRef.current) return;
+
+    try {
+      const result = await xummGetLoginStatus({ uuid });
+      const data = result.data as { signed: boolean; address?: string; balances?: { xrp: string; rlusd: string } };
+
+      if (data.signed && data.address) {
+        setPollingActive(false);
+        pollingActiveRef.current = false;
+        setShowQRDialog(false);
+        setConnecting(null);
+        setBalances(data.balances || { xrp: '0.00', rlusd: '0.00' });
+        setWalletAddress(data.address);
+        onWalletConnect('xumm', {
+          address: data.address,
+          balances: data.balances || { xrp: '0.00', rlusd: '0.00' }
+        });
+      } else if (pollingActiveRef.current) { // <-- FIXED: use ref, not state
+        setTimeout(checkStatus, 2000);
       }
-    };
-    
-    checkStatus();
+    } catch (error) {
+      if (pollingActiveRef.current) { // <-- FIXED: use ref, not state
+        setTimeout(checkStatus, 2000);
+      }
+    }
   };
+
+  checkStatus();
+};
 
   const handleConnect = async (walletId: string) => {
     if (walletId === 'xumm') {
