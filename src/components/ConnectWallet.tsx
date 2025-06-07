@@ -1,11 +1,11 @@
-
 import React, { useState } from 'react';
 import { Wallet, CheckCircle, ExternalLink, QrCode, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/lib/firebase';
 
 interface ConnectWalletProps {
   onWalletConnect: (walletType: string) => void;
@@ -18,8 +18,6 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [xummUuid, setXummUuid] = useState<string>('');
-
-  const functions = getFunctions();
 
   const walletOptions = [
     {
