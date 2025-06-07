@@ -305,64 +305,6 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Advanced Settings */}
-              <Card className="glass-card border-0 floating-card">
-                <CardHeader>
-                  <CardTitle 
-                    className="flex items-center justify-between cursor-pointer"
-                    onClick={() => handleInputChange('showAdvanced', !formData.showAdvanced)}
-                  >
-                    <span>Advanced Settings</span>
-                    <Switch checked={formData.showAdvanced} />
-                  </CardTitle>
-                </CardHeader>
-                
-                {formData.showAdvanced && (
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label className="mb-4 block">Yield Split Configuration</Label>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">Buyer</span>
-                          <span className="font-semibold">{formData.yieldSplit[0]}%</span>
-                        </div>
-                        <Slider
-                          value={[formData.yieldSplit[0]]}
-                          onValueChange={(value) => {
-                            const newSplit = [...formData.yieldSplit];
-                            newSplit[0] = value[0];
-                            handleInputChange('yieldSplit', newSplit);
-                          }}
-                          max={100}
-                          min={0}
-                          step={5}
-                        />
-                        
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm">Seller</span>
-                          <span className="font-semibold">{formData.yieldSplit[1]}%</span>
-                        </div>
-                        <Slider
-                          value={[formData.yieldSplit[1]]}
-                          onValueChange={(value) => {
-                            const newSplit = [...formData.yieldSplit];
-                            newSplit[1] = value[0];
-                            handleInputChange('yieldSplit', newSplit);
-                          }}
-                          max={100}
-                          min={0}
-                          step={5}
-                        />
-                        
-                        <div className="glass-card p-3 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Protocol Fee: {formData.yieldSplit[2]}%</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                )}
-              </Card>
             </div>
 
             {/* Summary Panel */}
