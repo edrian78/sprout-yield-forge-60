@@ -12,7 +12,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
   return (
     <div className="relative">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 min-h-[80vh] flex items-center">
+      <section className="container mx-auto px-4 py-20 min-h-screen flex items-center">
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* Left Content */}
           <div className="space-y-8">
@@ -55,62 +55,49 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
                 See How It Works
               </Button>
             </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">$2.5M+</div>
-                <div className="text-sm text-muted-foreground">Secured Volume</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">12.5%</div>
-                <div className="text-sm text-muted-foreground">Avg. APY</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">1,250+</div>
-                <div className="text-sm text-muted-foreground">Escrows Created</div>
-              </div>
-            </div>
           </div>
 
-          {/* Right Visual */}
+          {/* Right Visual - Two Token Cards */}
           <div className="relative flex items-center justify-center">
-            <div className="relative">
-              {/* Main Container */}
-              <div className="glass-card w-64 h-80 rounded-3xl p-8 floating-card animate-float">
-                <div className="relative h-full flex flex-col items-center justify-center space-y-6">
-                  {/* Sprout growing from coins */}
-                  <div className="relative">
-                    <div className="flex space-x-2 mb-4">
-                      <Coins className="h-6 w-6 coin-glow" />
-                      <Coins className="h-5 w-5 coin-glow" />
-                      <Coins className="h-4 w-4 coin-glow" />
+            <div className="flex flex-col space-y-6">
+              {/* XRP Card */}
+              <div className="glass-card w-64 h-32 rounded-3xl p-6 floating-card animate-float">
+                <div className="flex items-center justify-between h-full">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 font-bold text-lg">XRP</span>
                     </div>
-                    <div className="relative transform -translate-y-2">
-                      <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center animate-grow">
-                        <Timer className="h-8 w-8 sprout-icon" />
-                      </div>
-                      {/* Growth lines */}
-                      <div className="absolute -top-2 left-1/2 w-px h-8 bg-green-400 transform -translate-x-1/2 animate-shimmer"></div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">XRP</div>
+                      <div className="text-lg font-bold text-blue-600">12.5% APY</div>
                     </div>
                   </div>
-
-                  {/* Yield indicator */}
-                  <div className="glass-card px-3 py-1 rounded-full">
-                    <span className="text-sm font-medium text-green-600">+12.5% APY</span>
-                  </div>
+                  <div className="text-2xl">💧</div>
                 </div>
+              </div>
 
-                {/* Container base */}
-                <div className="absolute bottom-4 left-4 right-4 h-2 bg-green-200/50 rounded-full"></div>
+              {/* RLUSD Card */}
+              <div className="glass-card w-64 h-32 rounded-3xl p-6 floating-card animate-float" style={{ animationDelay: '0.5s' }}>
+                <div className="flex items-center justify-between h-full">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-green-600 font-bold text-xs">RLUSD</span>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">RLUSD</div>
+                      <div className="text-lg font-bold text-green-600">15% APY</div>
+                    </div>
+                  </div>
+                  <div className="text-2xl">💰</div>
+                </div>
               </div>
 
               {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '0.5s' }}>
+              <div className="absolute -top-4 -right-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
                 <Timer className="h-6 w-6 text-green-600" />
               </div>
               
-              <div className="absolute -bottom-4 -left-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
+              <div className="absolute -bottom-4 -left-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1.5s' }}>
                 <Coins className="h-6 w-6 text-yellow-600" />
               </div>
             </div>
