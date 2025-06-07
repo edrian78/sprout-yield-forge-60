@@ -40,10 +40,10 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
       const responseData = response.data as any;
       console.log('Response data structure:', responseData);
       
-      if (responseData && responseData.result) {
-        setPaymentData(responseData.result);
+      if (responseData) {
+        setPaymentData(responseData);
         setIsLoading(false);
-        console.log('Payment data set:', responseData.result);
+        console.log('Payment data set:', responseData);
         
         // Start checking payment status
         checkPaymentStatus();
@@ -73,7 +73,7 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
         
         const responseData = response.data as any;
         
-        if (responseData && responseData.result && responseData.result.success) {
+        if (responseData && responseData && responseData.success) {
           setIsCompleted(true);
           setIsChecking(false);
           toast({
