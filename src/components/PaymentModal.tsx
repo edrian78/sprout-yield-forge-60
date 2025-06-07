@@ -23,7 +23,7 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
   const [isChecking, setIsChecking] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const { toast } = useToast();
-console.log(url)
+
   const generateQRCode = (url: string) => {
     return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
   };
@@ -37,7 +37,7 @@ console.log(url)
       
       // Extract the result from the response data
       const result = response.data as { result: { uuid: string; url: string } };
-      
+      console.log(result)
       setPaymentData(result.result);
       setIsLoading(false);
       
