@@ -98,7 +98,7 @@ const Index = () => {
           />
         );
       case 'active-escrows':
-        return <ActiveEscrowDashboard />;
+        return <ActiveEscrowDashboard walletData={walletData} />;
       case 'payout-summary':
         return <PayoutSummary />;
       default:

@@ -1,6 +1,6 @@
-
 import { initializeApp } from 'firebase/app';
 import { getFunctions } from 'firebase/functions';
+import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration - you can update these values
 const firebaseConfig = {
@@ -19,3 +19,6 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Functions
 export const functions = getFunctions(app);
+
+// Initialize Firestore
+export const db = getFirestore(app);
