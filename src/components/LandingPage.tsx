@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowRight, Play, Timer, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 interface LandingPageProps {
   onStartEscrow: () => void;
@@ -9,6 +10,13 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore }) => {
+  const useCases = [
+    { title: "Freelancer", description: "Secure payments for projects" },
+    { title: "Payroll", description: "Automated salary payments" },
+    { title: "Transaction", description: "Safe peer-to-peer transfers" },
+    { title: "Invoice", description: "Guaranteed invoice payments" }
+  ];
+
   return (
     <div className="relative">
       {/* Hero Section */}
@@ -57,49 +65,76 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
             </div>
           </div>
 
-          {/* Right Visual - Two Token Cards */}
-          <div className="relative flex items-center justify-center">
-            <div className="flex flex-col space-y-6">
+          {/* Right Visual - Cards and Use Cases */}
+          <div className="relative flex flex-col items-center justify-center space-y-8">
+            {/* Token Cards - Horizontal Layout */}
+            <div className="flex space-x-6">
               {/* XRP Card */}
-              <div className="glass-card w-64 h-32 rounded-3xl p-6 floating-card animate-float">
-                <div className="flex items-center justify-between h-full">
+              <div className="glass-card w-48 h-32 rounded-3xl p-6 floating-card animate-float">
+                <div className="flex flex-col justify-between h-full">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 font-bold text-lg">XRP</span>
+                    <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 font-bold text-sm">XRP</span>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">XRP</div>
+                      <div className="text-xs text-muted-foreground">XRP</div>
                       <div className="text-lg font-bold text-blue-600">12.5% APY</div>
                     </div>
                   </div>
-                  <div className="text-2xl">💧</div>
+                  <div className="text-xl">💧</div>
                 </div>
               </div>
 
               {/* RLUSD Card */}
-              <div className="glass-card w-64 h-32 rounded-3xl p-6 floating-card animate-float" style={{ animationDelay: '0.5s' }}>
-                <div className="flex items-center justify-between h-full">
+              <div className="glass-card w-48 h-32 rounded-3xl p-6 floating-card animate-float" style={{ animationDelay: '0.5s' }}>
+                <div className="flex flex-col justify-between h-full">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
                       <span className="text-green-600 font-bold text-xs">RLUSD</span>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">RLUSD</div>
+                      <div className="text-xs text-muted-foreground">RLUSD</div>
                       <div className="text-lg font-bold text-green-600">15% APY</div>
                     </div>
                   </div>
-                  <div className="text-2xl">💰</div>
+                  <div className="text-xl">💰</div>
                 </div>
               </div>
+            </div>
 
-              {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
-                <Timer className="h-6 w-6 text-green-600" />
-              </div>
-              
-              <div className="absolute -bottom-4 -left-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1.5s' }}>
-                <Coins className="h-6 w-6 text-yellow-600" />
-              </div>
+            {/* Use Cases Carousel */}
+            <div className="w-full max-w-sm">
+              <Carousel 
+                className="w-full"
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+              >
+                <CarouselContent>
+                  {useCases.map((useCase, index) => (
+                    <CarouselItem key={index}>
+                      <div className="glass-card p-6 rounded-2xl text-center">
+                        <h3 className="text-xl font-semibold text-foreground mb-2">
+                          {useCase.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {useCase.description}
+                        </p>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+
+            {/* Floating elements */}
+            <div className="absolute -top-4 -right-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
+              <Timer className="h-6 w-6 text-green-600" />
+            </div>
+            
+            <div className="absolute -bottom-4 -left-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1.5s' }}>
+              <Coins className="h-6 w-6 text-yellow-600" />
             </div>
           </div>
         </div>
