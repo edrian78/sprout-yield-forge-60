@@ -22,6 +22,8 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
   const [xummUuid, setXummUuid] = useState<string>('');
   const [pollingActive, setPollingActive] = useState(false);
 
+  const pollingActiveRef = useRef(false);
+
   const walletOptions = [
     {
       id: 'xumm',
@@ -65,6 +67,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
       setXummUuid(data.uuid);
       setShowQRDialog(true);
       setPollingActive(true);
+      pollingActiveRef.current = true;
       
       // Start polling for login status
       pollLoginStatus(data.uuid);
@@ -79,7 +82,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
     const xummGetLoginStatus = httpsCallable(functions, 'xummGetLoginStatus');
     console.log(pollingActive)
     const checkStatus = async () => {
-      if (!pollingActive) return;
+      if (!pollingActiveRef.current) return;
       
       try {
         console.log('Checking XUMM login status for UUID:', uuid);
@@ -91,6 +94,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
         if (data.signed && data.address) {
           console.log('XUMM login successful!');
           setPollingActive(false);
+          pollingActiveRef.current = false;
           setShowQRDialog(false);
           setConnecting(null);
           
