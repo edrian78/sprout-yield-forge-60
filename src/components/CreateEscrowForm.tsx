@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, Calendar, Clock, Webhook, Coins, TrendingUp, Settings, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,12 +9,12 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-
 interface CreateEscrowFormProps {
   onCreateEscrow: (data: any) => void;
 }
-
-const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) => {
+const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
+  onCreateEscrow
+}) => {
   const [formData, setFormData] = useState({
     amount: '',
     currency: 'XRP',
@@ -25,20 +24,22 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
     releaseTime: '',
     yieldStrategy: 'xrpl-amm',
     duration: 30,
-    yieldSplit: [40, 40, 20], // buyer, seller, protocol
+    yieldSplit: [40, 40, 20],
+    // buyer, seller, protocol
     showAdvanced: false
   });
-
   const [estimatedYield, setEstimatedYield] = useState({
     daily: '0.34',
     total: '10.20',
     apy: '12.5'
   });
-
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => {
-      const newData = { ...prev, [field]: value };
-      
+      const newData = {
+        ...prev,
+        [field]: value
+      };
+
       // Auto-select appropriate yield strategy based on currency
       if (field === 'currency') {
         if (value === 'XRP') {
@@ -47,23 +48,18 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
           newData.yieldStrategy = 'bitget-savings';
         }
       }
-      
       return newData;
     });
-    
+
     // Recalculate yield when amount, duration, currency, or strategy changes
     if (field === 'amount' || field === 'duration' || field === 'yieldStrategy' || field === 'currency') {
       const amount = field === 'amount' ? parseFloat(value) || 0 : parseFloat(formData.amount) || 0;
       const duration = field === 'duration' ? value : formData.duration;
-      const strategy = field === 'yieldStrategy' ? value : 
-                     field === 'currency' ? (value === 'XRP' ? 'xrpl-amm' : 'bitget-savings') : 
-                     formData.yieldStrategy;
-      
+      const strategy = field === 'yieldStrategy' ? value : field === 'currency' ? value === 'XRP' ? 'xrpl-amm' : 'bitget-savings' : formData.yieldStrategy;
       if (amount > 0) {
         const apy = strategy === 'bitget-savings' ? 0.15 : 0.125;
-        const dailyYield = (amount * apy) / 365;
+        const dailyYield = amount * apy / 365;
         const totalYield = dailyYield * duration;
-        
         setEstimatedYield({
           daily: dailyYield.toFixed(2),
           total: totalYield.toFixed(2),
@@ -72,7 +68,6 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
       }
     }
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onCreateEscrow(formData);
@@ -81,31 +76,25 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
   // Get available yield strategies based on currency
   const getAvailableYieldStrategies = () => {
     if (formData.currency === 'XRP') {
-      return [
-        {
-          id: 'xrpl-amm',
-          title: 'XRPL AMM',
-          description: 'RLUSD/XRP Liquidity Pool',
-          apy: '12.5% APY',
-          badgeClass: 'nature-gradient text-white'
-        }
-      ];
+      return [{
+        id: 'xrpl-amm',
+        title: 'XRPL AMM',
+        description: 'RLUSD/XRP Liquidity Pool',
+        apy: '12.5% APY',
+        badgeClass: 'nature-gradient text-white'
+      }];
     } else if (formData.currency === 'RLUSD') {
-      return [
-        {
-          id: 'bitget-savings',
-          title: 'Bitget RLUSD Savings',
-          description: 'Off-chain yield option',
-          apy: '15.0% APY',
-          badgeClass: 'bg-blue-100 text-blue-800 border-0'
-        }
-      ];
+      return [{
+        id: 'bitget-savings',
+        title: 'Bitget RLUSD Savings',
+        description: 'Off-chain yield option',
+        apy: '15.0% APY',
+        badgeClass: 'bg-blue-100 text-blue-800 border-0'
+      }];
     }
     return [];
   };
-
-  return (
-    <div className="container mx-auto px-4 py-20">
+  return <div className="container mx-auto px-4 py-20">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -132,18 +121,11 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                   <div className="flex space-x-4">
                     <div className="flex-1">
                       <Label htmlFor="amount">Amount</Label>
-                      <Input
-                        id="amount"
-                        type="number"
-                        placeholder="1000"
-                        value={formData.amount}
-                        onChange={(e) => handleInputChange('amount', e.target.value)}
-                        className="glass-card border-0 text-lg font-semibold"
-                      />
+                      <Input id="amount" type="number" placeholder="1000" value={formData.amount} onChange={e => handleInputChange('amount', e.target.value)} className="glass-card border-0 text-lg font-semibold" />
                     </div>
                     <div className="w-32">
                       <Label htmlFor="currency">Currency</Label>
-                      <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
+                      <Select value={formData.currency} onValueChange={value => handleInputChange('currency', value)}>
                         <SelectTrigger className="glass-card border-0">
                           <SelectValue />
                         </SelectTrigger>
@@ -171,13 +153,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                 </CardHeader>
                 <CardContent>
                   <Label htmlFor="recipient">Recipient Wallet Address</Label>
-                  <Input
-                    id="recipient"
-                    placeholder="rN7n...k8dQ or full XRPL address"
-                    value={formData.recipient}
-                    onChange={(e) => handleInputChange('recipient', e.target.value)}
-                    className="glass-card border-0"
-                  />
+                  <Input id="recipient" placeholder="rN7n...k8dQ or full XRPL address" value={formData.recipient} onChange={e => handleInputChange('recipient', e.target.value)} className="glass-card border-0" />
                 </CardContent>
               </Card>
 
@@ -188,14 +164,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card 
-                      className={`cursor-pointer transition-all duration-300 ${
-                        formData.releaseCondition === 'manual' 
-                          ? 'ring-2 ring-green-500 bg-green-50/50' 
-                          : 'glass-card border-0 hover:scale-105'
-                      }`}
-                      onClick={() => handleInputChange('releaseCondition', 'manual')}
-                    >
+                    <Card className={`cursor-pointer transition-all duration-300 ${formData.releaseCondition === 'manual' ? 'ring-2 ring-green-500 bg-green-50/50' : 'glass-card border-0 hover:scale-105'}`} onClick={() => handleInputChange('releaseCondition', 'manual')}>
                       <CardContent className="p-4 text-center">
                         <Settings className="h-6 w-6 mx-auto mb-2 text-green-600" />
                         <h4 className="font-semibold">Manual Release</h4>
@@ -203,14 +172,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                       </CardContent>
                     </Card>
 
-                    <Card 
-                      className={`cursor-pointer transition-all duration-300 ${
-                        formData.releaseCondition === 'time' 
-                          ? 'ring-2 ring-green-500 bg-green-50/50' 
-                          : 'glass-card border-0 hover:scale-105'
-                      }`}
-                      onClick={() => handleInputChange('releaseCondition', 'time')}
-                    >
+                    <Card className={`cursor-pointer transition-all duration-300 ${formData.releaseCondition === 'time' ? 'ring-2 ring-green-500 bg-green-50/50' : 'glass-card border-0 hover:scale-105'}`} onClick={() => handleInputChange('releaseCondition', 'time')}>
                       <CardContent className="p-4 text-center">
                         <Clock className="h-6 w-6 mx-auto mb-2 text-blue-600" />
                         <h4 className="font-semibold">Time-Based</h4>
@@ -228,30 +190,16 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                     </Card>
                   </div>
 
-                  {formData.releaseCondition === 'time' && (
-                    <div className="grid grid-cols-2 gap-4 mt-4">
+                  {formData.releaseCondition === 'time' && <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
                         <Label htmlFor="releaseDate">Release Date</Label>
-                        <Input
-                          id="releaseDate"
-                          type="date"
-                          value={formData.releaseDate}
-                          onChange={(e) => handleInputChange('releaseDate', e.target.value)}
-                          className="glass-card border-0"
-                        />
+                        <Input id="releaseDate" type="date" value={formData.releaseDate} onChange={e => handleInputChange('releaseDate', e.target.value)} className="glass-card border-0" />
                       </div>
                       <div>
                         <Label htmlFor="releaseTime">Release Time</Label>
-                        <Input
-                          id="releaseTime"
-                          type="time"
-                          value={formData.releaseTime}
-                          onChange={(e) => handleInputChange('releaseTime', e.target.value)}
-                          className="glass-card border-0"
-                        />
+                        <Input id="releaseTime" type="time" value={formData.releaseTime} onChange={e => handleInputChange('releaseTime', e.target.value)} className="glass-card border-0" />
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
               </Card>
 
@@ -265,16 +213,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
-                    {getAvailableYieldStrategies().map((strategy) => (
-                      <Card 
-                        key={strategy.id}
-                        className={`cursor-pointer transition-all duration-300 ${
-                          formData.yieldStrategy === strategy.id 
-                            ? 'ring-2 ring-green-500 bg-green-50/50' 
-                            : 'glass-card border-0 hover:scale-105'
-                        }`}
-                        onClick={() => handleInputChange('yieldStrategy', strategy.id)}
-                      >
+                    {getAvailableYieldStrategies().map(strategy => <Card key={strategy.id} className={`cursor-pointer transition-all duration-300 ${formData.yieldStrategy === strategy.id ? 'ring-2 ring-green-500 bg-green-50/50' : 'glass-card border-0 hover:scale-105'}`} onClick={() => handleInputChange('yieldStrategy', strategy.id)}>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div>
@@ -284,20 +223,12 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                             <Badge className={strategy.badgeClass}>{strategy.apy}</Badge>
                           </div>
                         </CardContent>
-                      </Card>
-                    ))}
+                      </Card>)}
                   </div>
 
                   <div className="space-y-2">
                     <Label>Duration: {formData.duration} days</Label>
-                    <Slider
-                      value={[formData.duration]}
-                      onValueChange={(value) => handleInputChange('duration', value[0])}
-                      max={365}
-                      min={1}
-                      step={1}
-                      className="w-full"
-                    />
+                    <Slider value={[formData.duration]} onValueChange={value => handleInputChange('duration', value[0])} max={365} min={1} step={1} className="w-full" />
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>1 day</span>
                       <span>365 days</span>
@@ -363,11 +294,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                     </div>
                   </div>
 
-                  <Button 
-                    type="submit"
-                    className="w-full nature-gradient text-white font-semibold py-3 rounded-xl hover:scale-105 transition-all duration-300"
-                    disabled={!formData.amount || !formData.recipient}
-                  >
+                  <Button type="submit" disabled={!formData.amount || !formData.recipient} className="w-full nature-gradient text-white font-semibold py-3 rounded-xl hover:scale-105 transition-all duration-300">
                     Create Escrow
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -377,8 +304,6 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
           </div>
         </form>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default CreateEscrowForm;
