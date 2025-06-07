@@ -34,7 +34,7 @@ export const useEscrows = (walletAddress: string | null) => {
     setLoading(true);
     setError(null);
 
-    const escrowsRef = collection(db, 'escrow');
+    const escrowsRef = collection(db, 'escrows');
     const q = query(
       escrowsRef,
       or(
