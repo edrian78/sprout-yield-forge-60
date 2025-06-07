@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -30,18 +31,25 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
   const initiatePayment = async () => {
     setIsLoading(true);
     try {
+      console.log('Initiating payment for escrow:', escrowId);
       const requestEscrowPayment = httpsCallable(functions, 'requestEscrowPayment');
       const response = await requestEscrowPayment({ escrowId });
       console.log('Payment response:', response.data);
       
-      // Extract the result from the response data
-      const result = response.data as { result: { uuid: string; url: string } };
-
-      setPaymentData(result.result);
-      setIsLoading(false);
+      // Handle the response structure properly
+      const responseData = response.data as any;
+      console.log('Response data structure:', responseData);
       
-      // Start checking payment status
-      checkPaymentStatus();
+      if (responseData && responseData.result) {
+        setPaymentData(responseData.result);
+        setIsLoading(false);
+        console.log('Payment data set:', responseData.result);
+        
+        // Start checking payment status
+        checkPaymentStatus();
+      } else {
+        throw new Error('Invalid response structure from requestEscrowPayment');
+      }
     } catch (error) {
       console.error('Error initiating payment:', error);
       toast({
@@ -58,11 +66,14 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
     
     const checkStatus = async () => {
       try {
+        console.log('Checking payment status for escrow:', escrowId);
         const confirmEscrowPayment = httpsCallable(functions, 'confirmEscrowPayment');
         const response = await confirmEscrowPayment({ escrowId });
-        const result = response.data as { result: { success: boolean } };
+        console.log('Confirm payment response:', response.data);
         
-        if (result.result.success) {
+        const responseData = response.data as any;
+        
+        if (responseData && responseData.result && responseData.result.success) {
           setIsCompleted(true);
           setIsChecking(false);
           toast({
@@ -144,6 +155,12 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
                     src={generateQRCode(paymentData.url)}
                     alt="Payment QR Code"
                     className="w-48 h-48 mx-auto"
+                    onError={(e) => {
+                      console.error('QR code failed to load:', e);
+                    }}
+                    onLoad={() => {
+                      console.log('QR code loaded successfully for URL:', paymentData.url);
+                    }}
                   />
                 </div>
               </div>
