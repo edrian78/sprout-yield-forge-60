@@ -66,6 +66,10 @@ const Index = () => {
     setCurrentPage('active-escrows');
   };
 
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page as Page);
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'landing':
@@ -105,7 +109,7 @@ const Index = () => {
       onNetworkToggle={handleNetworkToggle}
       onWalletConnect={() => setCurrentPage('connect-wallet')}
       currentPage={currentPage}
-      onNavigate={setCurrentPage}
+      onNavigate={handleNavigate}
     >
       {renderPage()}
     </Layout>

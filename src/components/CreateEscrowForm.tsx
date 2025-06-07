@@ -24,9 +24,8 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
     releaseDate: '',
     releaseTime: '',
     yieldStrategy: 'xrpl-amm',
-    bitgetSavings: false,
     duration: 30,
-    yieldSplit: [50, 30, 20], // buyer, seller, protocol
+    yieldSplit: [40, 40, 20], // buyer, seller, protocol
     showAdvanced: false
   });
 
@@ -39,19 +38,21 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
-    // Recalculate yield when amount or duration changes
-    if (field === 'amount' || field === 'duration') {
+    // Recalculate yield when amount, duration, or strategy changes
+    if (field === 'amount' || field === 'duration' || field === 'yieldStrategy') {
       const amount = field === 'amount' ? parseFloat(value) || 0 : parseFloat(formData.amount) || 0;
       const duration = field === 'duration' ? value : formData.duration;
+      const strategy = field === 'yieldStrategy' ? value : formData.yieldStrategy;
       
       if (amount > 0) {
-        const dailyYield = (amount * 0.125) / 365;
+        const apy = strategy === 'bitget-savings' ? 0.15 : 0.125;
+        const dailyYield = (amount * apy) / 365;
         const totalYield = dailyYield * duration;
         
         setEstimatedYield({
           daily: dailyYield.toFixed(2),
           total: totalYield.toFixed(2),
-          apy: '12.5'
+          apy: strategy === 'bitget-savings' ? '15.0' : '12.5'
         });
       }
     }
@@ -222,8 +223,15 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <Card className="ring-2 ring-green-500 bg-green-50/50">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card 
+                      className={`cursor-pointer transition-all duration-300 ${
+                        formData.yieldStrategy === 'xrpl-amm' 
+                          ? 'ring-2 ring-green-500 bg-green-50/50' 
+                          : 'glass-card border-0 hover:scale-105'
+                      }`}
+                      onClick={() => handleInputChange('yieldStrategy', 'xrpl-amm')}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -234,17 +242,25 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                         </div>
                       </CardContent>
                     </Card>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold">Bitget RLUSD Savings</h4>
-                        <p className="text-sm text-muted-foreground">Off-chain yield option</p>
-                      </div>
-                      <Switch
-                        checked={formData.bitgetSavings}
-                        onCheckedChange={(checked) => handleInputChange('bitgetSavings', checked)}
-                      />
-                    </div>
+
+                    <Card 
+                      className={`cursor-pointer transition-all duration-300 ${
+                        formData.yieldStrategy === 'bitget-savings' 
+                          ? 'ring-2 ring-green-500 bg-green-50/50' 
+                          : 'glass-card border-0 hover:scale-105'
+                      }`}
+                      onClick={() => handleInputChange('yieldStrategy', 'bitget-savings')}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold">Bitget RLUSD Savings</h4>
+                            <p className="text-sm text-muted-foreground">Off-chain yield option</p>
+                          </div>
+                          <Badge className="bg-blue-100 text-blue-800 border-0">15.0% APY</Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
 
                   <div className="space-y-2">

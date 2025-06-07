@@ -33,8 +33,8 @@ const PayoutSummary = () => {
     recipient: '0xeba8f3352aa8441824cfb53010e8903654e50112',
     releaseDate: '2025-06-07T15:30:00Z',
     yieldSplit: {
-      buyer: 50,
-      seller: 30,
+      buyer: 40,
+      seller: 40,
       protocol: 20
     },
     txHash: 'A1B2C3D4E5F6789ABCDEF...',
