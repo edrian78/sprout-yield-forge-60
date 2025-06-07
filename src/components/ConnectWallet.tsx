@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Wallet, CheckCircle, ExternalLink, QrCode, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -56,8 +57,9 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
       
       console.log('XUMM login response:', data);
       
-      // Map the url to qrCodeUrl for consistency
-      setQrCodeUrl(data.url);
+      // Generate QR code using QR Server API
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(data.url)}`;
+      setQrCodeUrl(qrApiUrl);
       setXummUuid(data.uuid);
       setShowQRDialog(true);
       
@@ -83,11 +85,10 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
           setShowQRDialog(false);
           setConnecting(null);
           
-          // Set mock balances or use real ones from the response
-          setBalances(data.balances || {
-            xrp: '1,250.50',
-            rlusd: '5,000.00'
-          });
+          // Use actual balances from wallet response
+          if (data.balances) {
+            setBalances(data.balances);
+          }
           
           onWalletConnect('xumm');
         } else {
@@ -115,10 +116,11 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
     // Simulate wallet connection for other wallets
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Mock balances after connection
+    // For demo purposes, set mock balances for non-XUMM wallets
+    // In a real app, this would fetch actual balances
     setBalances({
-      xrp: '1,250.50',
-      rlusd: '5,000.00'
+      xrp: '0.00',
+      rlusd: '0.00'
     });
     
     setConnecting(null);
