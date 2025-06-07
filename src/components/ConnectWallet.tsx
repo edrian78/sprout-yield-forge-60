@@ -75,6 +75,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
   };
 
   const pollLoginStatus = async (uuid: string) => {
+    console.log("asd")
     const xummGetLoginStatus = httpsCallable(functions, 'xummGetLoginStatus');
     
     const checkStatus = async () => {
