@@ -36,13 +36,28 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
   });
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // Auto-select appropriate yield strategy based on currency
+      if (field === 'currency') {
+        if (value === 'XRP') {
+          newData.yieldStrategy = 'xrpl-amm';
+        } else if (value === 'RLUSD') {
+          newData.yieldStrategy = 'bitget-savings';
+        }
+      }
+      
+      return newData;
+    });
     
-    // Recalculate yield when amount, duration, or strategy changes
-    if (field === 'amount' || field === 'duration' || field === 'yieldStrategy') {
+    // Recalculate yield when amount, duration, currency, or strategy changes
+    if (field === 'amount' || field === 'duration' || field === 'yieldStrategy' || field === 'currency') {
       const amount = field === 'amount' ? parseFloat(value) || 0 : parseFloat(formData.amount) || 0;
       const duration = field === 'duration' ? value : formData.duration;
-      const strategy = field === 'yieldStrategy' ? value : formData.yieldStrategy;
+      const strategy = field === 'yieldStrategy' ? value : 
+                     field === 'currency' ? (value === 'XRP' ? 'xrpl-amm' : 'bitget-savings') : 
+                     formData.yieldStrategy;
       
       if (amount > 0) {
         const apy = strategy === 'bitget-savings' ? 0.15 : 0.125;
@@ -61,6 +76,32 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onCreateEscrow(formData);
+  };
+
+  // Get available yield strategies based on currency
+  const getAvailableYieldStrategies = () => {
+    if (formData.currency === 'XRP') {
+      return [
+        {
+          id: 'xrpl-amm',
+          title: 'XRPL AMM',
+          description: 'RLUSD/XRP Liquidity Pool',
+          apy: '12.5% APY',
+          badgeClass: 'nature-gradient text-white'
+        }
+      ];
+    } else if (formData.currency === 'RLUSD') {
+      return [
+        {
+          id: 'bitget-savings',
+          title: 'Bitget RLUSD Savings',
+          description: 'Off-chain yield option',
+          apy: '15.0% APY',
+          badgeClass: 'bg-blue-100 text-blue-800 border-0'
+        }
+      ];
+    }
+    return [];
   };
 
   return (
@@ -223,44 +264,28 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({ onCreateEscrow }) =
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card 
-                      className={`cursor-pointer transition-all duration-300 ${
-                        formData.yieldStrategy === 'xrpl-amm' 
-                          ? 'ring-2 ring-green-500 bg-green-50/50' 
-                          : 'glass-card border-0 hover:scale-105'
-                      }`}
-                      onClick={() => handleInputChange('yieldStrategy', 'xrpl-amm')}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold">XRPL AMM</h4>
-                            <p className="text-sm text-muted-foreground">RLUSD/XRP Liquidity Pool</p>
+                  <div className="grid grid-cols-1 gap-4">
+                    {getAvailableYieldStrategies().map((strategy) => (
+                      <Card 
+                        key={strategy.id}
+                        className={`cursor-pointer transition-all duration-300 ${
+                          formData.yieldStrategy === strategy.id 
+                            ? 'ring-2 ring-green-500 bg-green-50/50' 
+                            : 'glass-card border-0 hover:scale-105'
+                        }`}
+                        onClick={() => handleInputChange('yieldStrategy', strategy.id)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-semibold">{strategy.title}</h4>
+                              <p className="text-sm text-muted-foreground">{strategy.description}</p>
+                            </div>
+                            <Badge className={strategy.badgeClass}>{strategy.apy}</Badge>
                           </div>
-                          <Badge className="nature-gradient text-white">12.5% APY</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card 
-                      className={`cursor-pointer transition-all duration-300 ${
-                        formData.yieldStrategy === 'bitget-savings' 
-                          ? 'ring-2 ring-green-500 bg-green-50/50' 
-                          : 'glass-card border-0 hover:scale-105'
-                      }`}
-                      onClick={() => handleInputChange('yieldStrategy', 'bitget-savings')}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold">Bitget RLUSD Savings</h4>
-                            <p className="text-sm text-muted-foreground">Off-chain yield option</p>
-                          </div>
-                          <Badge className="bg-blue-100 text-blue-800 border-0">15.0% APY</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
 
                   <div className="space-y-2">
