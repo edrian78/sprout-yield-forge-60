@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Wallet, CheckCircle, ExternalLink, QrCode, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -80,20 +81,20 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
       if (!pollingActive) return;
       
       try {
+        console.log('Checking XUMM login status for UUID:', uuid);
         const result = await xummGetLoginStatus({ uuid });
         const data = result.data as { signed: boolean; address?: string; balances?: { xrp: string; rlusd: string } };
         
         console.log('XUMM status check:', data);
         
         if (data.signed && data.address) {
+          console.log('XUMM login successful!');
           setPollingActive(false);
           setShowQRDialog(false);
           setConnecting(null);
           
           // Store wallet data
-          if (data.balances) {
-            setBalances(data.balances);
-          }
+          setBalances(data.balances || { xrp: '0.00', rlusd: '0.00' });
           setWalletAddress(data.address);
           
           // Pass wallet data to parent
@@ -125,23 +126,11 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
     
     setConnecting(walletId);
     
-    // Simulate wallet connection for other wallets
+    // For other wallets, show that they're not fully implemented yet
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // For demo purposes, set mock balances for non-XUMM wallets
-    const mockBalances = {
-      xrp: '0.00',
-      rlusd: '0.00'
-    };
-    
-    setBalances(mockBalances);
-    setWalletAddress('rN7n...k8dQ');
-    
     setConnecting(null);
-    onWalletConnect(walletId, {
-      address: 'rN7n...k8dQ',
-      balances: mockBalances
-    });
+    alert(`${walletId} wallet integration is not yet implemented. Please use XUMM for now.`);
   };
 
   const handleCloseQRDialog = () => {
