@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Wallet, CheckCircle, ExternalLink, QrCode, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,16 +8,18 @@ import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
 
 interface ConnectWalletProps {
-  onWalletConnect: (walletType: string) => void;
+  onWalletConnect: (walletType: string, walletData?: { address: string; balances: { xrp: string; rlusd: string } }) => void;
   network: 'devnet' | 'mainnet';
 }
 
 const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network }) => {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [balances, setBalances] = useState<{ xrp: string; rlusd: string } | null>(null);
+  const [walletAddress, setWalletAddress] = useState<string>('');
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [xummUuid, setXummUuid] = useState<string>('');
+  const [pollingActive, setPollingActive] = useState(false);
 
   const walletOptions = [
     {
@@ -62,6 +63,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
       setQrCodeUrl(qrApiUrl);
       setXummUuid(data.uuid);
       setShowQRDialog(true);
+      setPollingActive(true);
       
       // Start polling for login status
       pollLoginStatus(data.uuid);
@@ -75,30 +77,40 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
     const xummGetLoginStatus = httpsCallable(functions, 'xummGetLoginStatus');
     
     const checkStatus = async () => {
+      if (!pollingActive) return;
+      
       try {
         const result = await xummGetLoginStatus({ uuid });
         const data = result.data as { signed: boolean; address?: string; balances?: { xrp: string; rlusd: string } };
         
         console.log('XUMM status check:', data);
         
-        if (data.signed) {
+        if (data.signed && data.address) {
+          setPollingActive(false);
           setShowQRDialog(false);
           setConnecting(null);
           
-          // Use actual balances from wallet response
+          // Store wallet data
           if (data.balances) {
             setBalances(data.balances);
           }
+          setWalletAddress(data.address);
           
-          onWalletConnect('xumm');
-        } else {
+          // Pass wallet data to parent
+          onWalletConnect('xumm', {
+            address: data.address,
+            balances: data.balances || { xrp: '0.00', rlusd: '0.00' }
+          });
+        } else if (pollingActive) {
           // Continue polling after 2 seconds
           setTimeout(checkStatus, 2000);
         }
       } catch (error) {
         console.error('Error checking XUMM login status:', error);
-        // Continue polling
-        setTimeout(checkStatus, 2000);
+        if (pollingActive) {
+          // Continue polling
+          setTimeout(checkStatus, 2000);
+        }
       }
     };
     
@@ -117,24 +129,30 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // For demo purposes, set mock balances for non-XUMM wallets
-    // In a real app, this would fetch actual balances
-    setBalances({
+    const mockBalances = {
       xrp: '0.00',
       rlusd: '0.00'
-    });
+    };
+    
+    setBalances(mockBalances);
+    setWalletAddress('rN7n...k8dQ');
     
     setConnecting(null);
-    onWalletConnect(walletId);
+    onWalletConnect(walletId, {
+      address: 'rN7n...k8dQ',
+      balances: mockBalances
+    });
   };
 
   const handleCloseQRDialog = () => {
+    setPollingActive(false);
     setShowQRDialog(false);
     setConnecting(null);
     setQrCodeUrl('');
     setXummUuid('');
   };
 
-  if (balances) {
+  if (balances && walletAddress) {
     return (
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-md mx-auto">
@@ -181,7 +199,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
               <div className="glass-card p-3 rounded-lg">
                 <div className="text-xs text-muted-foreground mb-1">Wallet Address</div>
                 <div className="font-mono text-sm flex items-center justify-between">
-                  <span>rN7n...k8dQ</span>
+                  <span>{walletAddress.length > 10 ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}` : walletAddress}</span>
                   <ExternalLink className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>

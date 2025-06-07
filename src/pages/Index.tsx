@@ -12,6 +12,7 @@ type Page = 'landing' | 'connect-wallet' | 'create-escrow' | 'active-escrows' | 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [walletConnected, setWalletConnected] = useState(false);
+  const [walletData, setWalletData] = useState<{ address: string; balances: { xrp: string; rlusd: string } } | null>(null);
   const [network, setNetwork] = useState<'devnet' | 'mainnet'>('devnet');
 
   useEffect(() => {
@@ -48,9 +49,12 @@ const Index = () => {
     console.log('Learn more clicked');
   };
 
-  const handleWalletConnect = (walletType: string) => {
-    console.log('Connected wallet:', walletType);
+  const handleWalletConnect = (walletType: string, data?: { address: string; balances: { xrp: string; rlusd: string } }) => {
+    console.log('Connected wallet:', walletType, data);
     setWalletConnected(true);
+    if (data) {
+      setWalletData(data);
+    }
     // The ConnectWallet component will handle navigation to create-escrow
   };
 
@@ -105,6 +109,7 @@ const Index = () => {
     <Layout
       showWalletConnection={currentPage !== 'landing'}
       walletConnected={walletConnected}
+      walletData={walletData}
       network={network}
       onNetworkToggle={handleNetworkToggle}
       onWalletConnect={() => setCurrentPage('connect-wallet')}

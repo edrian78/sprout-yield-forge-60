@@ -8,6 +8,7 @@ interface LayoutProps {
   children: React.ReactNode;
   showWalletConnection?: boolean;
   walletConnected?: boolean;
+  walletData?: { address: string; balances: { xrp: string; rlusd: string } } | null;
   network?: 'devnet' | 'mainnet';
   onNetworkToggle?: () => void;
   onWalletConnect?: () => void;
@@ -19,6 +20,7 @@ const Layout: React.FC<LayoutProps> = ({
   children,
   showWalletConnection = false,
   walletConnected = false,
+  walletData = null,
   network = 'devnet',
   onNetworkToggle,
   onWalletConnect,
@@ -84,14 +86,14 @@ const Layout: React.FC<LayoutProps> = ({
                 </div>
 
                 {/* Wallet Status */}
-                {walletConnected ? (
+                {walletConnected && walletData ? (
                   <div className="flex items-center space-x-2">
                     <Badge className="bg-green-100 text-green-800 border-0">
                       <Wallet className="h-3 w-3 mr-1" />
                       Connected
                     </Badge>
                     <div className="hidden sm:block text-sm text-muted-foreground">
-                      Balance: 1,250 XRP
+                      Balance: {walletData.balances.xrp} XRP
                     </div>
                   </div>
                 ) : (
