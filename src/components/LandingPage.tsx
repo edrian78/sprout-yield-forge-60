@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Play, Lock, TrendingUp, Unlock, Timer, Jar, Coins } from 'lucide-react';
+import { ArrowRight, Play, Lock, TrendingUp, Unlock, Timer, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -74,7 +74,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
           {/* Right Visual */}
           <div className="relative flex items-center justify-center">
             <div className="relative">
-              {/* Main Jar */}
+              {/* Main Container */}
               <div className="glass-card w-64 h-80 rounded-3xl p-8 floating-card animate-float">
                 <div className="relative h-full flex flex-col items-center justify-center space-y-6">
                   {/* Sprout growing from coins */}
@@ -99,13 +99,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
                   </div>
                 </div>
 
-                {/* Jar base */}
+                {/* Container base */}
                 <div className="absolute bottom-4 left-4 right-4 h-2 bg-green-200/50 rounded-full"></div>
               </div>
 
               {/* Floating elements */}
               <div className="absolute -top-4 -right-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '0.5s' }}>
-                <Jar className="h-6 w-6 text-green-600" />
+                <Timer className="h-6 w-6 text-green-600" />
               </div>
               
               <div className="absolute -bottom-4 -left-4 glass-card w-12 h-12 rounded-full flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
@@ -190,7 +190,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
 
           <Card className="glass-card floating-card border-0 p-6 text-center" style={{ animationDelay: '0.1s' }}>
             <CardContent className="space-y-3">
-              <Jar className="h-8 w-8 mx-auto sprout-icon" />
+              <Timer className="h-8 w-8 mx-auto sprout-icon" />
               <h4 className="font-semibold">Secure Escrow</h4>
               <p className="text-sm text-muted-foreground">Trustless smart contracts</p>
             </CardContent>
