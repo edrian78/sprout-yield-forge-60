@@ -36,10 +36,11 @@ const Layout: React.FC<LayoutProps> = ({
               className="flex items-center space-x-2 cursor-pointer" 
               onClick={() => onNavigate?.('landing')}
             >
-              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                <Timer className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Sprout</span>
+              <img 
+                src="/lovable-uploads/95e0a80a-97d5-4e25-ba54-286ec34dca17.png" 
+                alt="Sprout Logo" 
+                className="h-8 w-auto"
+              />
             </div>
 
             {/* Navigation */}
@@ -120,10 +121,11 @@ const Layout: React.FC<LayoutProps> = ({
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-6 h-6 bg-green-500 rounded-lg flex items-center justify-center">
-                <Timer className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-medium text-foreground">Sprout</span>
+              <img 
+                src="/lovable-uploads/95e0a80a-97d5-4e25-ba54-286ec34dca17.png" 
+                alt="Sprout Logo" 
+                className="h-6 w-auto"
+              />
               <span className="text-sm text-muted-foreground">
                 Yield-generating escrow on XRPL
               </span>
