@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -38,11 +37,11 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
       // Extract the result from the response data
       const result = response.data as { result: { uuid: string; url: string } };
 
-      setPaymentData(result);
+      setPaymentData(result.result);
       setIsLoading(false);
       
       // Start checking payment status
-      checkPaymentStatus(result.uuid);
+      checkPaymentStatus();
     } catch (error) {
       console.error('Error initiating payment:', error);
       toast({
@@ -54,13 +53,13 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
     }
   };
 
-  const checkPaymentStatus = async (uuid: string) => {
+  const checkPaymentStatus = async () => {
     setIsChecking(true);
     
     const checkStatus = async () => {
       try {
         const confirmEscrowPayment = httpsCallable(functions, 'confirmEscrowPayment');
-        const response = await confirmEscrowPayment({ uuid });
+        const response = await confirmEscrowPayment({ escrowId });
         const result = response.data as { result: { success: boolean } };
         
         if (result.result.success) {
