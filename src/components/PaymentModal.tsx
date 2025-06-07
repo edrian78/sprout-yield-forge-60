@@ -37,12 +37,12 @@ const PaymentModal = ({ isOpen, onClose, escrowId, escrowTitle, amount, asset }:
       
       // Extract the result from the response data
       const result = response.data as { result: { uuid: string; url: string } };
-      console.log(result.url)
-      setPaymentData(result.result);
+
+      setPaymentData(result);
       setIsLoading(false);
       
       // Start checking payment status
-      checkPaymentStatus(result.result.uuid);
+      checkPaymentStatus(result.uuid);
     } catch (error) {
       console.error('Error initiating payment:', error);
       toast({
