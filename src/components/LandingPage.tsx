@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Play, Timer, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 
 interface LandingPageProps {
   onStartEscrow: () => void;
@@ -10,12 +10,26 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore }) => {
+  const [api, setApi] = React.useState<CarouselApi>();
+
   const useCases = [
     { title: "Freelancer", description: "Secure payments for projects" },
     { title: "Payroll", description: "Automated salary payments" },
     { title: "Transaction", description: "Safe peer-to-peer transfers" },
     { title: "Invoice", description: "Guaranteed invoice payments" }
   ];
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [api]);
 
   return (
     <div className="relative">
@@ -105,6 +119,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
             {/* Use Cases Carousel */}
             <div className="w-full max-w-sm">
               <Carousel 
+                setApi={setApi}
                 className="w-full"
                 opts={{
                   align: "start",
