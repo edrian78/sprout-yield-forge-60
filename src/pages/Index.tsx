@@ -94,6 +94,7 @@ const Index = () => {
         return (
           <CreateEscrowForm 
             onCreateEscrow={handleCreateEscrow}
+            walletData={walletData}
           />
         );
       case 'active-escrows':

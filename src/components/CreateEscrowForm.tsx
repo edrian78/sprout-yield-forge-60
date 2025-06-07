@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowRight, Calendar, Clock, Webhook, Coins, TrendingUp, Settings, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,13 +10,20 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/lib/firebase';
+
 interface CreateEscrowFormProps {
   onCreateEscrow: (data: any) => void;
+  walletData?: { address: string; balances: { xrp: string; rlusd: string } };
 }
+
 const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
-  onCreateEscrow
+  onCreateEscrow,
+  walletData
 }) => {
   const [formData, setFormData] = useState({
+    title: '',
     amount: '',
     currency: 'XRP',
     recipient: '',
@@ -33,6 +41,8 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
     total: '10.20',
     apy: '12.5'
   });
+  const [isCreating, setIsCreating] = useState(false);
+
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => {
       const newData = {
@@ -68,9 +78,41 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
       }
     }
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onCreateEscrow(formData);
+    
+    if (!walletData?.address) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    setIsCreating(true);
+    
+    try {
+      const createEscrow = httpsCallable(functions, 'createEscrow');
+      const escrowData = {
+        title: formData.title,
+        asset: formData.currency,
+        amount: parseFloat(formData.amount),
+        lockPeriod: formData.duration,
+        receiverWallet: formData.recipient,
+        senderWallet: walletData.address
+      };
+
+      console.log('Creating escrow with data:', escrowData);
+      
+      const result = await createEscrow(escrowData);
+      console.log('Escrow created successfully:', result.data);
+      
+      // Call the original onCreateEscrow callback
+      onCreateEscrow(formData);
+    } catch (error) {
+      console.error('Error creating escrow:', error);
+      alert('Failed to create escrow. Please try again.');
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   // Get available yield strategies based on currency
@@ -94,6 +136,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
     }
     return [];
   };
+
   return <div className="container mx-auto px-4 py-20">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
@@ -109,6 +152,24 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
             {/* Main Form */}
             <div className="lg:col-span-2 space-y-6">
               
+              {/* Title Section */}
+              <Card className="glass-card border-0 floating-card">
+                <CardHeader>
+                  <CardTitle>Escrow Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Label htmlFor="title">Escrow Title</Label>
+                  <Input 
+                    id="title" 
+                    placeholder="Enter a descriptive title for this escrow" 
+                    value={formData.title} 
+                    onChange={e => handleInputChange('title', e.target.value)} 
+                    className="glass-card border-0" 
+                    required
+                  />
+                </CardContent>
+              </Card>
+
               {/* Amount Section */}
               <Card className="glass-card border-0 floating-card">
                 <CardHeader>
@@ -121,7 +182,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
                   <div className="flex space-x-4">
                     <div className="flex-1">
                       <Label htmlFor="amount">Amount</Label>
-                      <Input id="amount" type="number" placeholder="1000" value={formData.amount} onChange={e => handleInputChange('amount', e.target.value)} className="glass-card border-0 text-lg font-semibold" />
+                      <Input id="amount" type="number" placeholder="1000" value={formData.amount} onChange={e => handleInputChange('amount', e.target.value)} className="glass-card border-0 text-lg font-semibold" required />
                     </div>
                     <div className="w-32">
                       <Label htmlFor="currency">Currency</Label>
@@ -153,7 +214,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
                 </CardHeader>
                 <CardContent>
                   <Label htmlFor="recipient">Recipient Wallet Address</Label>
-                  <Input id="recipient" placeholder="rN7n...k8dQ or full XRPL address" value={formData.recipient} onChange={e => handleInputChange('recipient', e.target.value)} className="glass-card border-0" />
+                  <Input id="recipient" placeholder="rN7n...k8dQ or full XRPL address" value={formData.recipient} onChange={e => handleInputChange('recipient', e.target.value)} className="glass-card border-0" required />
                 </CardContent>
               </Card>
 
@@ -294,9 +355,22 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
                     </div>
                   </div>
 
-                  <Button type="submit" disabled={!formData.amount || !formData.recipient} className="w-full nature-gradient text-white font-semibold py-3 rounded-xl hover:scale-105 transition-all duration-300">
-                    Create Escrow
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                  <Button 
+                    type="submit" 
+                    disabled={!formData.title || !formData.amount || !formData.recipient || isCreating} 
+                    className="w-full nature-gradient text-white font-semibold py-3 rounded-xl hover:scale-105 transition-all duration-300"
+                  >
+                    {isCreating ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                        <span>Creating Escrow...</span>
+                      </div>
+                    ) : (
+                      <>
+                        Create Escrow
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
                   </Button>
                 </CardContent>
               </Card>
