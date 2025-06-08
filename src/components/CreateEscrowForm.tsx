@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, Calendar, Clock, Webhook, Coins, TrendingUp, Settings, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 interface CreateEscrowFormProps {
   onCreateEscrow: (data: any) => void;
@@ -22,6 +22,7 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
   onCreateEscrow,
   walletData
 }) => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: '',
     amount: '',
@@ -83,7 +84,11 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
     e.preventDefault();
     
     if (!walletData?.address) {
-      alert('Please connect your wallet first');
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet first to create an escrow.",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -105,11 +110,20 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
       const result = await createEscrow(escrowData);
       console.log('Escrow created successfully:', result.data);
       
+      toast({
+        title: "Escrow Created Successfully!",
+        description: "Your escrow has been created and is now active.",
+      });
+      
       // Call the original onCreateEscrow callback
       onCreateEscrow(formData);
     } catch (error) {
       console.error('Error creating escrow:', error);
-      alert('Failed to create escrow. Please try again.');
+      toast({
+        title: "Failed to Create Escrow",
+        description: "An error occurred while creating your escrow. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsCreating(false);
     }
@@ -136,6 +150,9 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
     }
     return [];
   };
+
+  // Check if form is valid and wallet is connected
+  const isFormValid = formData.title && formData.amount && formData.recipient && walletData?.address;
 
   return <div className="container mx-auto px-4 py-20">
       <div className="max-w-4xl mx-auto">
@@ -355,9 +372,18 @@ const CreateEscrowForm: React.FC<CreateEscrowFormProps> = ({
                     </div>
                   </div>
 
+                  {!walletData?.address && (
+                    <div className="glass-card p-3 rounded-lg bg-orange-50/50 border border-orange-200">
+                      <div className="text-center text-sm text-orange-700">
+                        <Info className="h-4 w-4 mx-auto mb-1" />
+                        Connect your wallet to create escrow
+                      </div>
+                    </div>
+                  )}
+
                   <Button 
                     type="submit" 
-                    disabled={!formData.title || !formData.amount || !formData.recipient || isCreating} 
+                    disabled={!isFormValid || isCreating} 
                     className="w-full nature-gradient text-white font-semibold py-3 rounded-xl hover:scale-105 transition-all duration-300"
                   >
                     {isCreating ? (
