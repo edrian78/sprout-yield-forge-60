@@ -87,8 +87,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
               <div className="glass-card w-48 h-32 rounded-3xl p-6 floating-card animate-float">
                 <div className="flex flex-col justify-between h-full">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 font-bold text-sm">XRP</span>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="/lovable-uploads/d2e9a7d2-58fb-4443-b332-88205925aea3.png" 
+                        alt="XRP Logo" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">XRP</div>
