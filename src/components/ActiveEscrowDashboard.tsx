@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { Timer, TrendingUp, Clock, ExternalLink, Unlock, DollarSign, CreditCard } from 'lucide-react';
+import { Timer, TrendingUp, Clock, ExternalLink, Unlock, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useEscrows } from '@/hooks/useEscrows';
 import PaymentModal from '@/components/PaymentModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface ActiveEscrowDashboardProps {
   walletData?: { address: string; balances: { xrp: string; rlusd: string } } | null;
@@ -14,6 +15,7 @@ interface ActiveEscrowDashboardProps {
 
 const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
   const { escrows, loading, error } = useEscrows(walletData?.address || null);
+  const { toast } = useToast();
   const [paymentModal, setPaymentModal] = useState<{
     isOpen: boolean;
     escrowId: string;
@@ -62,6 +64,15 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
     return Math.max(0, diffDays);
   };
 
+  const canUnlock = (unlockAt: any) => {
+    if (!unlockAt) return false;
+    
+    const now = new Date().getTime();
+    const end = unlockAt.toDate?.()?.getTime() || unlockAt;
+    
+    return now >= end;
+  };
+
   const handlePayment = (escrow: any) => {
     setPaymentModal({
       isOpen: true,
@@ -70,6 +81,43 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
       amount: escrow.amount,
       asset: escrow.asset
     });
+  };
+
+  const handleWithdraw = async (escrowId: string, escrowTitle: string, amount: number, asset: string) => {
+    try {
+      console.log('Withdrawing escrow:', escrowId);
+      
+      // Call backend withdrawEscrow function
+      const response = await fetch('https://us-central1-wzard-ecb8c.cloudfunctions.net/withdrawEscrow', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: {
+            escrowId: escrowId
+          }
+        })
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.data) {
+        toast({
+          title: "Withdrawal Successful!",
+          description: `Successfully withdrew ${amount} ${asset} from "${escrowTitle}"`,
+        });
+      } else {
+        throw new Error(result.error?.message || 'Withdrawal failed');
+      }
+    } catch (error) {
+      console.error('Withdrawal error:', error);
+      toast({
+        title: "Withdrawal Failed",
+        description: error instanceof Error ? error.message : "An error occurred during withdrawal",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleRelease = (escrowId: string) => {
@@ -181,6 +229,7 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
           const daysRemaining = getDaysRemaining(escrow.unlockAt);
           const progress = getProgressPercentage(escrow.createdAt, escrow.unlockAt);
           const projectedYield = escrow.amount * escrow.yieldRate * (escrow.lockPeriod / 365);
+          const isUnlockable = canUnlock(escrow.unlockAt);
           
           return (
             <Card key={escrow.id} className="glass-card border-0 floating-card">
@@ -236,7 +285,7 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">
                         <Clock className="h-4 w-4 inline mr-1" />
-                        {daysRemaining} days remaining
+                        {isUnlockable ? 'Ready to unlock' : `${daysRemaining} days remaining`}
                       </span>
                       <span className="text-sm text-muted-foreground">
                         {Math.round(progress)}% complete
@@ -262,6 +311,14 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
                     >
                       <Unlock className="h-4 w-4 mr-2" />
                       Release Funds
+                    </Button>
+                  ) : escrow.status === 'active' && isUnlockable ? (
+                    <Button 
+                      onClick={() => handleWithdraw(escrow.id, escrow.title, escrow.amount, escrow.asset)}
+                      className="w-full nature-gradient text-white font-semibold hover:scale-105 transition-all duration-300"
+                    >
+                      <Banknote className="h-4 w-4 mr-2" />
+                      Withdraw Funds
                     </Button>
                   ) : (
                     <Button 
