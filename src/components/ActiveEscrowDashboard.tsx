@@ -64,12 +64,39 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
   };
 
   const canUnlock = (unlockAt: any) => {
-    if (!unlockAt) return false;
+    console.log('canUnlock called with:', unlockAt);
+    
+    if (!unlockAt) {
+      console.log('No unlockAt provided');
+      return false;
+    }
     
     const now = new Date().getTime();
-    const end = unlockAt.toDate?.()?.getTime() || unlockAt;
+    console.log('Current time (ms):', now);
+    console.log('Current time (readable):', new Date(now).toISOString());
     
-    return now >= end;
+    // Handle Firebase Timestamp
+    let endTime;
+    if (unlockAt.toDate && typeof unlockAt.toDate === 'function') {
+      endTime = unlockAt.toDate().getTime();
+      console.log('Firebase Timestamp detected, converted to:', endTime);
+    } else if (unlockAt.seconds) {
+      // Firebase Timestamp object structure
+      endTime = unlockAt.seconds * 1000 + (unlockAt.nanoseconds || 0) / 1000000;
+      console.log('Firebase Timestamp with seconds detected, converted to:', endTime);
+    } else {
+      endTime = unlockAt;
+      console.log('Using unlockAt directly:', endTime);
+    }
+    
+    console.log('End time (ms):', endTime);
+    console.log('End time (readable):', new Date(endTime).toISOString());
+    
+    const canUnlockResult = now >= endTime;
+    console.log('Can unlock result:', canUnlockResult);
+    console.log('Time difference (ms):', now - endTime);
+    
+    return canUnlockResult;
   };
 
   const handlePayment = (escrow: any) => {
