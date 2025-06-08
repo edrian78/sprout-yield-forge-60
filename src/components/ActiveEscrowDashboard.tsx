@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Timer, TrendingUp, Clock, ExternalLink, Unlock, DollarSign, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -110,11 +111,14 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
     );
   }
 
-  const totalLocked = escrows
+  // Filter out pending payment escrows for calculations
+  const activeEscrows = escrows.filter(e => e.status !== 'pending_payment');
+  
+  const totalLocked = activeEscrows
     .filter(e => e.status === 'active')
     .reduce((sum, e) => sum + e.amount, 0);
   
-  const totalYield = escrows
+  const totalYield = activeEscrows
     .filter(e => e.status === 'active')
     .reduce((sum, e) => sum + (e.amount * e.yieldRate * (e.lockPeriod / 365)), 0);
 
