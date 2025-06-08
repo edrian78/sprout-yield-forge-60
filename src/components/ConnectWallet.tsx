@@ -27,9 +27,9 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
   const walletOptions = [
     {
       id: 'xumm',
-      name: 'XUMM',
+      name: 'Xaman Wallet (XUMM)',
       description: 'The most popular XRPL wallet',
-      icon: '🦎',
+      icon: '/lovable-uploads/605ca037-3edf-458b-8ae8-afb4fd4e640e.png',
       supported: true,
       recommended: true
     },
@@ -232,7 +232,17 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="text-3xl">{wallet.icon}</div>
+                      <div className="w-12 h-12 flex items-center justify-center">
+                        {wallet.id === 'xumm' ? (
+                          <img 
+                            src={wallet.icon} 
+                            alt="Xaman Wallet (XUMM) Logo" 
+                            className="w-8 h-8 object-contain"
+                          />
+                        ) : (
+                          <div className="text-3xl">{wallet.icon}</div>
+                        )}
+                      </div>
                       <div>
                         <div className="flex items-center space-x-2">
                           <h3 className="font-semibold">{wallet.name}</h3>
