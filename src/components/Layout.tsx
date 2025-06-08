@@ -39,7 +39,7 @@ const Layout: React.FC<LayoutProps> = ({
               onClick={() => onNavigate?.('landing')}
             >
               <img 
-                src="/lovable-uploads/501be49d-2431-4c06-93d8-b38fcb83c880.png" 
+                src="/lovable-uploads/22503825-3906-4d67-8a46-254601457efd.png" 
                 alt="Sprout Logo" 
                 className="h-12 w-auto"
               />
@@ -124,7 +124,7 @@ const Layout: React.FC<LayoutProps> = ({
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <img 
-                src="/lovable-uploads/501be49d-2431-4c06-93d8-b38fcb83c880.png" 
+                src="/lovable-uploads/22503825-3906-4d67-8a46-254601457efd.png" 
                 alt="Sprout Logo" 
                 className="h-6 w-auto"
               />
