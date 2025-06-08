@@ -36,7 +36,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
       id: 'tangem',
       name: 'Tangem',
       description: 'Hardware wallet security',
-      icon: '💳',
+      icon: '/lovable-uploads/6ea47a86-2037-4d8e-a1b8-905dcacca007.png',
       supported: true,
       recommended: false
     },
@@ -236,6 +236,12 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
                           <img 
                             src={wallet.icon} 
                             alt="Xaman (XUMM) Logo" 
+                            className="w-8 h-8 object-contain"
+                          />
+                        ) : wallet.id === 'tangem' ? (
+                          <img 
+                            src={wallet.icon} 
+                            alt="Tangem Logo" 
                             className="w-8 h-8 object-contain"
                           />
                         ) : (
