@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Wallet, Globe, Timer, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,7 +40,7 @@ const Layout: React.FC<LayoutProps> = ({
               <img 
                 src="/lovable-uploads/95e0a80a-97d5-4e25-ba54-286ec34dca17.png" 
                 alt="Sprout Logo" 
-                className="h-8 w-auto"
+                className="h-12 w-auto"
               />
             </div>
 
