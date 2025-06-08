@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Wallet, Globe, Timer, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,7 +39,7 @@ const Layout: React.FC<LayoutProps> = ({
               onClick={() => onNavigate?.('landing')}
             >
               <img 
-                src="/lovable-uploads/95e0a80a-97d5-4e25-ba54-286ec34dca17.png" 
+                src="/lovable-uploads/501be49d-2431-4c06-93d8-b38fcb83c880.png" 
                 alt="Sprout Logo" 
                 className="h-12 w-auto"
               />
@@ -123,7 +124,7 @@ const Layout: React.FC<LayoutProps> = ({
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <img 
-                src="/lovable-uploads/95e0a80a-97d5-4e25-ba54-286ec34dca17.png" 
+                src="/lovable-uploads/501be49d-2431-4c06-93d8-b38fcb83c880.png" 
                 alt="Sprout Logo" 
                 className="h-6 w-auto"
               />
