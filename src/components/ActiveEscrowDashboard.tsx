@@ -338,7 +338,7 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
                       <Unlock className="h-4 w-4 mr-2" />
                       Release Funds
                     </Button>
-                  ) : escrow.status === 'active' && isUnlockable ? (
+                  ) : escrow.status === 'funded' && isUnlockable ? (
                     <Button 
                       onClick={() => handleWithdraw(escrow.id, escrow.title, escrow.amount, escrow.asset)}
                       className="w-full nature-gradient text-white font-semibold hover:scale-105 transition-all duration-300"
