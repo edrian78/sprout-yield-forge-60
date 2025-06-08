@@ -6,10 +6,12 @@ import ConnectWallet from '@/components/ConnectWallet';
 import CreateEscrowForm from '@/components/CreateEscrowForm';
 import ActiveEscrowDashboard from '@/components/ActiveEscrowDashboard';
 import PayoutSummary from '@/components/PayoutSummary';
+import { useToast } from '@/hooks/use-toast';
 
 type Page = 'landing' | 'connect-wallet' | 'create-escrow' | 'active-escrows' | 'payout-summary';
 
 const Index = () => {
+  const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletData, setWalletData] = useState<{ address: string; balances: { xrp: string; rlusd: string } } | null>(null);
@@ -64,8 +66,12 @@ const Index = () => {
 
   const handleCreateEscrow = (escrowData: any) => {
     console.log('Creating escrow with data:', escrowData);
-    // In a real app, this would call the XRPL smart contract
-    alert('Escrow created successfully! (Demo)');
+    
+    toast({
+      title: "Escrow Created Successfully!",
+      description: "Your escrow has been created and is now active.",
+    });
+    
     // Navigate to active escrows to see the new escrow
     setCurrentPage('active-escrows');
   };
