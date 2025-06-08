@@ -107,8 +107,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
               <div className="glass-card w-48 h-32 rounded-3xl p-6 floating-card animate-float" style={{ animationDelay: '0.5s' }}>
                 <div className="flex flex-col justify-between h-full">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-green-600 font-bold text-xs">RLUSD</span>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="/lovable-uploads/cd221866-6ffa-4102-a36e-d7d5afc4be7b.png" 
+                        alt="RLUSD Logo" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">RLUSD</div>
