@@ -1,5 +1,4 @@
-
-import React, { useState,useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Wallet, CheckCircle, ExternalLink, QrCode, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +26,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
   const walletOptions = [
     {
       id: 'xumm',
-      name: 'Xaman Wallet (XUMM)',
+      name: 'Xaman (XUMM)',
       description: 'The most popular XRPL wallet',
       icon: '/lovable-uploads/605ca037-3edf-458b-8ae8-afb4fd4e640e.png',
       supported: true,
@@ -236,7 +235,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({ onWalletConnect, network 
                         {wallet.id === 'xumm' ? (
                           <img 
                             src={wallet.icon} 
-                            alt="Xaman Wallet (XUMM) Logo" 
+                            alt="Xaman (XUMM) Logo" 
                             className="w-8 h-8 object-contain"
                           />
                         ) : (
