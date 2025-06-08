@@ -192,11 +192,11 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
   const activeEscrows = escrows.filter(e => e.status !== 'pending_payment');
   
   const totalLocked = activeEscrows
-    .filter(e => e.status === 'withdrawn' || e.status === 'funded')
+    .filter(e => e.status === 'funded')
     .reduce((sum, e) => sum + e.amount, 0);
   
   const totalYield = activeEscrows
-    .filter(e => e.status === 'withdrawn' || e.status === 'funded')
+    .filter(e => e.status === 'funded')
     .reduce((sum, e) => sum + (e.amount * e.yieldRate * (e.lockPeriod / 365)), 0);
 
   return (
