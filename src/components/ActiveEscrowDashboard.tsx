@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Timer, TrendingUp, Clock, ExternalLink, Unlock, DollarSign, CreditCard, Banknote } from 'lucide-react';
+import { Timer, TrendingUp, Clock, ExternalLink, Unlock, DollarSign, CreditCard, Banknote, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +34,9 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
     switch (status) {
       case 'pending_payment': return 'bg-yellow-100 text-yellow-800';
       case 'active': return 'bg-green-100 text-green-800';
+      case 'funded': return 'bg-blue-100 text-blue-800';
       case 'completed': return 'bg-blue-100 text-blue-800';
+      case 'withdrawn': return 'bg-purple-100 text-purple-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -128,7 +131,7 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
 
       const result = await response.json();
       
-      if (response.ok && result.data) {
+      if (response.ok && result.result?.success) {
         toast({
           title: "Withdrawal Successful!",
           description: `Successfully withdrew ${amount} ${asset} from "${escrowTitle}"`,
@@ -337,6 +340,15 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
                     >
                       <Unlock className="h-4 w-4 mr-2" />
                       Release Funds
+                    </Button>
+                  ) : escrow.status === 'withdrawn' ? (
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      disabled
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Complete
                     </Button>
                   ) : escrow.status === 'funded' && isUnlockable ? (
                     <Button 
