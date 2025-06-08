@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Play, Timer, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -99,7 +98,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
                       <div className="text-lg font-bold text-blue-600">12.5% APY</div>
                     </div>
                   </div>
-                  <div className="text-xl">💧</div>
+                  
                 </div>
               </div>
 
@@ -119,7 +118,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartEscrow, onLearnMore })
                       <div className="text-lg font-bold text-green-600">15% APY</div>
                     </div>
                   </div>
-                  <div className="text-xl">💰</div>
+                  
                 </div>
               </div>
             </div>
