@@ -256,7 +256,7 @@ const ActiveEscrowDashboard = ({ walletData }: ActiveEscrowDashboardProps) => {
           const progress = getProgressPercentage(escrow.createdAt, escrow.unlockAt);
           const projectedYield = escrow.amount * escrow.yieldRate * (escrow.lockPeriod / 365);
           const isUnlockable = canUnlock(escrow.unlockAt);
-          
+          console.log(isUnlockable);
           return (
             <Card key={escrow.id} className="glass-card border-0 floating-card">
               <CardHeader className="pb-4">
